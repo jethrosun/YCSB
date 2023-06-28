@@ -20,6 +20,7 @@ import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.ByteArrayComparable;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.StringUtils;
 import site.ycsb.ByteArrayByteIterator;
 import site.ycsb.ByteIterator;
 import site.ycsb.DBException;
@@ -49,8 +50,11 @@ import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -89,6 +93,9 @@ public class HBaseClient2 extends site.ycsb.DB {
 
   private String columnFamily = "";
   private byte[] columnFamilyBytes;
+
+  private long ttlMilliscond = Integer.MAX_VALUE * 1000L;
+  private List<String> ttlColumns = Collections.emptyList();
 
   /**
    * Durability to use for puts and deletes.
@@ -200,6 +207,13 @@ public class HBaseClient2 extends site.ycsb.DB {
       throw new DBException("No columnfamily specified");
     }
     columnFamilyBytes = Bytes.toBytes(columnFamily);
+
+    if (StringUtils.isNotBlank(getProperties().getProperty("ttl"))) {
+      ttlMilliscond = Long.parseLong(getProperties().getProperty("ttl"));
+    }
+    if (StringUtils.isNotBlank(getProperties().getProperty("columns"))) {
+      ttlColumns = Arrays.asList(getProperties().getProperty("columns").split(","));
+    }
   }
 
   /**
@@ -464,7 +478,20 @@ public class HBaseClient2 extends site.ycsb.DB {
         System.out.println("Adding field/value " + entry.getKey() + "/"
             + Bytes.toStringBinary(value) + " to put request");
       }
-      p.addColumn(columnFamilyBytes, Bytes.toBytes(entry.getKey()), value);
+      if (ttlColumns.contains(entry.getKey()) && Integer.MAX_VALUE != ttlMilliscond/1000) {
+        Put p2 = new Put(Bytes.toBytes(key)).addColumn(columnFamilyBytes, Bytes.toBytes(entry.getKey()), value);
+        p2.setTTL(ttlMilliscond);
+        try {
+          currentTable.put(p2);
+        } catch (IOException e) {
+          if (debug) {
+            System.err.println("Error doing put: " + e);
+          }
+          return Status.ERROR;
+        }
+      } else {
+        p.addColumn(columnFamilyBytes, Bytes.toBytes(entry.getKey()), value);
+      }
     }
 
     try {
