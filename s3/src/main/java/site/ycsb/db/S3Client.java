@@ -143,69 +143,18 @@ public class S3Client extends DB {
         String accessKeyId = "minioadmin";
         String secretKey = "redbull64";
         String endPoint = "localhost:9000";
-        String region = null;
-        String maxErrorRetry = null;
+        String region = "us-east-1";
+        String maxErrorRetry = "15";
         String maxConnections = null;
-        String protocol = null;
+        String protocol = "HTTP";
+        sse = "false";
+        ssec = null;
 
         BasicAWSCredentials s3Credentials;
         ClientConfiguration clientConfig;
         if (s3Client != null) {
           System.out.println("Reusing the same client");
           return;
-        }
-        try {
-          InputStream propFile = S3Client.class.getClassLoader()
-              .getResourceAsStream("s3.properties");
-          Properties props = new Properties(System.getProperties());
-          props.load(propFile);
-          accessKeyId = props.getProperty("s3.accessKeyId");
-          System.out.println("DEBUG1: accessKeyId " + accessKeyId);
-          if (accessKeyId == null){
-            accessKeyId = propsCL.getProperty("s3.accessKeyId");
-            System.out.println("DEBUG2: accessKeyId " + accessKeyId);
-          }
-          System.out.println("DEBUG3:" + accessKeyId);
-          secretKey = props.getProperty("s3.secretKey");
-          if (secretKey == null){
-            secretKey = propsCL.getProperty("s3.secretKey");
-          }
-          System.out.println(secretKey);
-          endPoint = props.getProperty("s3.endPoint");
-          if (endPoint == null){
-            endPoint = propsCL.getProperty("s3.endPoint", "s3.amazonaws.com");
-          }
-          System.out.println(endPoint);
-          region = props.getProperty("s3.region");
-          if (region == null){
-            region = propsCL.getProperty("s3.region", "us-east-1");
-          }
-          System.out.println(region);
-          maxErrorRetry = props.getProperty("s3.maxErrorRetry");
-          if (maxErrorRetry == null){
-            maxErrorRetry = propsCL.getProperty("s3.maxErrorRetry", "15");
-          }
-          maxConnections = props.getProperty("s3.maxConnections");
-          if (maxConnections == null){
-            maxConnections = propsCL.getProperty("s3.maxConnections");
-          }
-          protocol = props.getProperty("s3.protocol");
-          if (protocol == null){
-            protocol = propsCL.getProperty("s3.protocol", "HTTPS");
-          }
-          sse = props.getProperty("s3.sse");
-          if (sse == null){
-            sse = propsCL.getProperty("s3.sse", "false");
-          }
-          String ssec = props.getProperty("s3.ssec");
-          if (ssec == null){
-            ssec = propsCL.getProperty("s3.ssec", null);
-          } else {
-            ssecKey = new SSECustomerKey(ssec);
-          }
-        } catch (Exception e){
-          System.err.println("The file properties doesn't exist "+e.toString());
-          e.printStackTrace();
         }
         try {
           System.out.println("Inizializing the S3 connection");
@@ -384,13 +333,16 @@ public class S3Client extends DB {
       try {
         PutObjectResult res =
             s3Client.putObject(putObjectRequest);
+        System.out.println("DEBUG: 1");
         if(res.getETag() == null) {
+          System.out.println("DEBUG: etag");
           return Status.ERROR;
         } else {
           if (sseLocal.equals("true")) {
             System.out.println("Uploaded object encryption status is " +
                 res.getSSEAlgorithm());
           } else if (ssecLocal != null) {
+            System.out.println("DEBUG: 2");
             System.out.println("Uploaded object encryption status is " +
                 res.getSSEAlgorithm());
           }
