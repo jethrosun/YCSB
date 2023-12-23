@@ -318,17 +318,8 @@ public class S3Client extends DB {
       ObjectMetadata metadata = new ObjectMetadata();
       metadata.setContentLength(totalSize);
       PutObjectRequest putObjectRequest = null;
-      if (sseLocal.equals("true")) {
-        metadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
-        putObjectRequest = new PutObjectRequest(bucket, key,
-            input, metadata);
-      } else if (ssecLocal != null) {
-        putObjectRequest = new PutObjectRequest(bucket, key,
-            input, metadata).withSSECustomerKey(ssecLocal);
-      } else {
-        putObjectRequest = new PutObjectRequest(bucket, key,
-            input, metadata);
-      }
+      putObjectRequest = new PutObjectRequest(bucket, key,
+          input, metadata).withSSECustomerKey(ssecLocal);
 
       try {
         PutObjectResult res =
