@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (c) 2012 - 2020 YCSB contributors. All rights reserved.
 #
@@ -323,4 +323,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
