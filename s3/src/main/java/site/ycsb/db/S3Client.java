@@ -148,8 +148,7 @@ public class S3Client extends DB {
         String maxConnections = null;
         String protocol = "HTTP";
         sse = "false";
-        ssec = null;
-        ssecKey = new SSECustomerKey(ssec);
+        ssecKey = new SSECustomerKey(null);
 
         BasicAWSCredentials s3Credentials;
         ClientConfiguration clientConfig;
