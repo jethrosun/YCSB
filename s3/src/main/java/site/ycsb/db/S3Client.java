@@ -137,8 +137,7 @@ public class S3Client extends DB {
           return;
         }
         try {
-          InputStream propFile = S3Client.class.getClassLoader()
-            .getResourceAsStream("s3.properties");
+          InputStream propFile = S3Client.class.getClassLoader().getResourceAsStream("s3.properties");
           Properties props = new Properties(System.getProperties());
           props.load(propFile);
           accessKeyId = props.getProperty("s3.accessKeyId");
@@ -345,20 +344,12 @@ public class S3Client extends DB {
       offset += sizeArray;
     }
     try (InputStream input = new ByteArrayInputStream(destinationArray)) {
-      PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-        .bucket(bucket)
-        .key(key)
-        .contentLength((long) totalSize)
-        .build();
+      PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucket).key(key).contentLength((long) totalSize).build();
 
       if (sseLocal.equals("true")) {
-        putObjectRequest = putObjectRequest.toBuilder()
-          .serverSideEncryption(ServerSideEncryption.AES256)
-          .build();
+        putObjectRequest = putObjectRequest.toBuilder().serverSideEncryption(ServerSideEncryption.AES256).build();
       } else if (ssecLocal != null) {
-        putObjectRequest = putObjectRequest.toBuilder()
-          .sseCustomerKey(ssecLocal)
-          .build();
+        putObjectRequest = putObjectRequest.toBuilder().sseCustomerKey(ssecLocal).build();
       }
 
       // s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(input, totalSize));
@@ -403,11 +394,7 @@ public class S3Client extends DB {
   protected Status readFromStorage(String bucket, String key, Map<String, ByteIterator> result,
       SSECustomerKey ssecLocal) {
     try {
-      GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-        .bucket(bucket)
-        .key(key)
-        .sseCustomerKey(ssecLocal)
-        .build();
+      GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).sseCustomerKey(ssecLocal).build();
 
       ResponseInputStream<GetObjectResponse> objectData = s3Client.getObject(getObjectRequest);
 
