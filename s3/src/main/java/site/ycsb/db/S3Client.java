@@ -35,22 +35,25 @@ import site.ycsb.DB;
 import site.ycsb.DBException;
 import site.ycsb.Status;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.*;
-import com.amazonaws.auth.*;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.Protocol;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.amazonaws.services.s3.model.SSECustomerKey;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.*;
+import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.s3.model.ObjectMetadata;
+import software.amazon.awssdk.services.s3.model.PutObjectResult;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+
+import software.amazon.awssdk.services.s3.model.ObjectListing;
+import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+
+import software.amazon.awssdk.auth.*;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.Protocol;
+
 
 /**
  * S3 Storage client for YCSB framework.
@@ -74,7 +77,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
  */
 public class S3Client extends DB {
 
-  private static AmazonS3Client s3Client;
+  // private static S3Client s3Client;
   private static String sse;
   private static SSECustomerKey ssecKey;
   private static final AtomicInteger INIT_COUNT = new AtomicInteger(0);
@@ -221,7 +224,7 @@ public class S3Client extends DB {
           if(maxConnections != null) {
             clientConfig.setMaxConnections(Integer.parseInt(maxConnections));
           }
-          s3Client = new AmazonS3Client(s3Credentials, clientConfig);
+          s3Client = new S3Client(s3Credentials, clientConfig);
           s3Client.setRegion(Region.getRegion(Regions.fromName(region)));
           s3Client.setEndpoint(endPoint);
           System.out.println("Connection successfully initialized");
