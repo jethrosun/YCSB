@@ -18,10 +18,6 @@
  */
 package site.ycsb.db;
 
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
@@ -144,13 +140,14 @@ public class S3Client extends DB {
         numberOfOperations = operationcount;
       }
       if (count <= numberOfOperations) {
-        String accessKeyId = null;
-        String secretKey = null;
-        String endPoint = null;
+        String accessKeyId = "minioadmin";
+        String secretKey = "redbull64";
+        String endPoint = "localhost:9000";
         String region = null;
         String maxErrorRetry = null;
         String maxConnections = null;
         String protocol = null;
+
         BasicAWSCredentials s3Credentials;
         ClientConfiguration clientConfig;
         if (s3Client != null) {
@@ -163,10 +160,12 @@ public class S3Client extends DB {
           Properties props = new Properties(System.getProperties());
           props.load(propFile);
           accessKeyId = props.getProperty("s3.accessKeyId");
+          System.out.println("DEBUG1: accessKeyId " + accessKeyId);
           if (accessKeyId == null){
             accessKeyId = propsCL.getProperty("s3.accessKeyId");
+            System.out.println("DEBUG2: accessKeyId " + accessKeyId);
           }
-          System.out.println(accessKeyId);
+          System.out.println("DEBUG3:" + accessKeyId);
           secretKey = props.getProperty("s3.secretKey");
           if (secretKey == null){
             secretKey = propsCL.getProperty("s3.secretKey");
