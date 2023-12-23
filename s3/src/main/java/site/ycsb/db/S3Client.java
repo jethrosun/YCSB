@@ -21,7 +21,7 @@ package site.ycsb.db;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.core.sync.RequestBody;
+// import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -99,10 +99,10 @@ public class S3Client extends DB {
     return Status.OK;
   }
 
-    /**
-  * Initialize any state for the storage.
-  * Called once per S3 instance; If the client is not null it is re-used.
-  */
+  /**
+   * Initialize any state for the storage.
+   * Called once per S3 instance; If the client is not null it is re-used.
+   */
   @Override
   public void init() throws DBException {
     final int count = INIT_COUNT.incrementAndGet();
@@ -138,7 +138,7 @@ public class S3Client extends DB {
         }
         try {
           InputStream propFile = S3Client.class.getClassLoader()
-              .getResourceAsStream("s3.properties");
+            .getResourceAsStream("s3.properties");
           Properties props = new Properties(System.getProperties());
           props.load(propFile);
           accessKeyId = props.getProperty("s3.accessKeyId");
@@ -195,9 +195,9 @@ public class S3Client extends DB {
           AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretKey);
 
           s3Client = S3Client.builder()
-              .region(Region.of(region))
-              .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-              .build();
+            .region(Region.of(region))
+            .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+            .build();
 
           System.out.println("Connection successfully initialized");
         } catch (Exception e) {
@@ -209,7 +209,7 @@ public class S3Client extends DB {
         System.err.println(
             "The number of threads must be less or equal than the operations");
         throw new DBException(new Error(
-            "The number of threads must be less or equal than the operations"));
+              "The number of threads must be less or equal than the operations"));
       }
     }
   }
@@ -318,7 +318,7 @@ public class S3Client extends DB {
       boolean updateMarker, String sseLocal, SSECustomerKey ssecLocal) {
     int totalSize = 0;
     int fieldCount = values.size(); // number of fields to concatenate
-    // getting the first field in the values
+                                    // getting the first field in the values
     Object keyToSearch = values.keySet().toArray()[0];
     // getting the content of just one field
     byte[] sourceArray = values.get(keyToSearch).toArray();
@@ -346,25 +346,25 @@ public class S3Client extends DB {
     }
     try (InputStream input = new ByteArrayInputStream(destinationArray)) {
       PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .contentLength((long) totalSize)
-          .build();
+        .bucket(bucket)
+        .key(key)
+        .contentLength((long) totalSize)
+        .build();
 
       if (sseLocal.equals("true")) {
         putObjectRequest = putObjectRequest.toBuilder()
-            .serverSideEncryption(ServerSideEncryption.AES256)
-            .build();
+          .serverSideEncryption(ServerSideEncryption.AES256)
+          .build();
       } else if (ssecLocal != null) {
         putObjectRequest = putObjectRequest.toBuilder()
-            .sseCustomerKey(ssecLocal)
-            .build();
+          .sseCustomerKey(ssecLocal)
+          .build();
       }
 
       // s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(input, totalSize));
-try {
+      try {
         PutObjectResult res =
-            s3Client.putObject(putObjectRequest);
+          s3Client.putObject(putObjectRequest);
         if(res.getETag() == null) {
           return Status.ERROR;
         } else {
@@ -404,10 +404,10 @@ try {
       SSECustomerKey ssecLocal) {
     try {
       GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .sseCustomerKey(ssecLocal)
-          .build();
+        .bucket(bucket)
+        .key(key)
+        .sseCustomerKey(ssecLocal)
+        .build();
 
       ResponseInputStream<GetObjectResponse> objectData = s3Client.getObject(getObjectRequest);
 
@@ -473,7 +473,7 @@ try {
     }
     // Sorting the list of files in Alphabetical order
     Collections.sort(keyList); // sorting the list
-    // Getting the position of the startingfile for the scan
+                               // Getting the position of the startingfile for the scan
     for (String key : keyList) {
       if (key.equals(startkey)) {
         startkeyNumber = counter;
