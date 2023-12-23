@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
 # Copyright (c) 2012 - 2020 YCSB contributors. All rights reserved.
 #
@@ -28,7 +28,7 @@ try:
     mod = __import__('argparse')
     import argparse
 except ImportError:
-    print >> sys.stderr, '[ERROR] argparse not found. Try installing it via "pip".'
+    print('[ERROR] argparse not found. Try installing it via "pip".', sys.stderr)
     exit(1)
 
 BASE_URL = "https://github.com/brianfrankcooper/YCSB/tree/master/"
@@ -117,26 +117,26 @@ OPTIONS = {
 
 def usage():
     output = io.BytesIO()
-    print >> output, "%s command database [options]" % sys.argv[0]
+    print("%s command database [options]" % sys.argv[0], output)
 
-    print >> output, "\nCommands:"
+    print("\nCommands:", output)
     for command in sorted(COMMANDS.keys()):
-        print >> output, "    %s %s" % (command.ljust(14),
-                                        COMMANDS[command]["description"])
+        print("    %s %s" % (command.ljust(14),
+                                        COMMANDS[command]["description"]), output)
 
-    print >> output, "\nDatabases:"
+    print("\nDatabases:", output)
     for db in sorted(DATABASES.keys()):
-        print >> output, "    %s %s" % (db.ljust(14), BASE_URL +
-                                        db.split("-")[0])
+        print("    %s %s" % (db.ljust(14), BASE_URL +
+                                        db.split("-")[0]), output)
 
-    print >> output, "\nOptions:"
+    print("\nOptions:", output)
     for option in sorted(OPTIONS.keys()):
-        print >> output, "    %s %s" % (option.ljust(14), OPTIONS[option])
+        print("    %s %s" % (option.ljust(14), OPTIONS[option]), output)
 
-    print >> output, """\nWorkload Files:
+    print("""\nWorkload Files:
     There are various predefined workloads under workloads/ directory.
     See https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties
-    for the list of workload properties."""
+    for the list of workload properties.""", output)
 
     return output.getvalue()
 
@@ -177,13 +177,13 @@ def check_output(*popenargs, **kwargs):
     return output
 
 def debug(message):
-    print >> sys.stderr, "[DEBUG] ", message
+    print("[DEBUG] ", message, sys.stderr)
 
 def warn(message):
-    print >> sys.stderr, "[WARN] ", message
+    print("[WARN] ", message, sys.stderr)
 
 def error(message):
-    print >> sys.stderr, "[ERROR] ", message
+    print("[ERROR] ", message,  sys.stderr)
 
 def find_jars(dir, glob='*.jar'):
     jars = []
@@ -220,7 +220,7 @@ def get_classpath_from_maven(module):
         # the last module will be the datastore binding
         line = [x for x in mvn_output.splitlines() if x.startswith("classpath=")][-1:]
         return line[0][len("classpath="):]
-    except subprocess.CalledProcessError, err:
+    except subprocess.CalledProcessError as err:
         error("Attempting to generate a classpath from Maven failed "
               "with return code '" + str(err.returncode) + "'. The output from "
               "Maven follows, try running "
@@ -311,7 +311,7 @@ def main():
                      main_classname, "-db", db_classname] + remaining)
     if command:
         ycsb_command.append(command)
-    print >> sys.stderr, " ".join(ycsb_command)
+    print(" ".join(ycsb_command), sys.stderr)
     try:
         return subprocess.call(ycsb_command)
     except OSError as e:
@@ -323,4 +323,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
