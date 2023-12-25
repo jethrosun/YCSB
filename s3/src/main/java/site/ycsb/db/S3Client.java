@@ -324,7 +324,6 @@ public class S3Client extends DB {
       try {
         PutObjectResult res =
             s3Client.putObject(putObjectRequest);
-        System.out.println("DEBUG: 1");
         if(res.getETag() == null) {
           System.out.println("DEBUG: etag");
           return Status.ERROR;
@@ -333,7 +332,6 @@ public class S3Client extends DB {
             System.out.println("Uploaded object encryption status is " +
                 res.getSSEAlgorithm());
           } else if (ssecLocal != null) {
-            System.out.println("DEBUG: 2");
             System.out.println("Uploaded object encryption status is " +
                 res.getSSEAlgorithm());
           }
