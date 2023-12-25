@@ -145,10 +145,9 @@ public class S3Client extends DB {
         String endPoint = "localhost:9000";
         String region = "us-east-1";
         String maxErrorRetry = "15";
-        String maxConnections = null;
+        String maxConnections = "10";
         String protocol = "HTTP";
         sse = "false";
-        // ssecKey = new SSECustomerKey(null);
 
         BasicAWSCredentials s3Credentials;
         ClientConfiguration clientConfig;
@@ -172,6 +171,7 @@ public class S3Client extends DB {
           s3Client = new AmazonS3Client(s3Credentials, clientConfig);
           s3Client.setRegion(Region.getRegion(Regions.fromName(region)));
           s3Client.setEndpoint(endPoint);
+          s3Client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(true));
           System.out.println("Connection successfully initialized");
         } catch (Exception e){
           System.err.println("Could not connect to S3 storage: "+ e.toString());
